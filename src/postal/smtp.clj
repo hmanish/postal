@@ -28,7 +28,7 @@
 
 (defn ^:dynamic smtp-send* [session proto {:keys [host port user pass]} msgs]
   (with-open [transport (.getTransport session proto)]
-    (.connect transport host port (str user) (str pass))
+    (.connect transport host port (if (nil? user) user (str user)) (if (nil? pass) pass (str pass)))
     (let [jmsgs (map #(make-jmessage % session) msgs)]
       (doseq [jmsg jmsgs]
         (.sendMessage transport jmsg (.getAllRecipients jmsg)))
